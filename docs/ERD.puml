@@ -1,0 +1,73 @@
+@startuml VDES Entity Relationship Diagram
+
+' hide the spot
+hide circle
+
+' avoid problems with angled crows feet
+skinparam linetype ortho
+
+entity User {
+  -id: ObjectID <<generated>>
+  --
+  name: string
+  roles: string[]
+  email: string
+  phoneNumber: string
+  isInactive: boolean
+  avatar: string
+  password: string
+}
+
+entity Category {
+  -id: ObjectID <<generated>>
+  --
+  ~parentId: ObjectID <<FK_Category>>
+  --
+  * name: string
+  ' * imageUrl: string
+  description: string
+  isInactive: boolean
+}
+
+entity Product {
+  -id: ObjectID <<generated>>
+  --
+  ~ownerId: ObjectID <<FK_User>>
+  ~subCategoryId: ObjectID <<FK_Category>>
+  --
+  * name: string
+  * price: number
+  * imageUrls: string[]
+  description: string
+  inStockQty: number
+  isInactive: boolean
+}
+
+entity Feedback {
+  -id: ObjectID <<generated>>
+  --
+  ~userId: ObjectID <<FK_User>>
+  ~productId: ObjectID <<FK_Product>>
+  --
+  rating: number
+  comment: string
+  photos: string[]
+}
+
+entity Order {
+  -id: ObjectID <<generated>>
+  --
+  ~buyerId: ObjectID <<FK_User>>
+  --
+  status: string
+  products: Product[]
+}
+
+User ||--o{ Product
+User ||--o{ Feedback
+User ||--o{ Order
+
+Category ||--o{ Category
+Category ||--o{ Product
+
+@enduml
