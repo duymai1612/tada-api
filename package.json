@@ -33,6 +33,7 @@
     "openapi-spec": "node ./dist/openapi-spec",
     "prestart": "yarn run rebuild",
     "start": "node -r source-map-support/register .",
+    "dev": "nodemon --config nodemon.json",
     "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
     "rebuild": "yarn run clean && yarn run build"
   },
@@ -59,11 +60,12 @@
   },
   "devDependencies": {
     "@loopback/build": "^6.4.0",
-    "source-map-support": "^0.5.19",
+    "@loopback/eslint-config": "^10.2.0",
     "@loopback/testlab": "^3.4.0",
     "@types/node": "^10.17.59",
-    "@loopback/eslint-config": "^10.2.0",
     "eslint": "^7.25.0",
+    "nodemon": "^2.0.7",
+    "source-map-support": "^0.5.19",
     "typescript": "~4.2.4"
   }
 }
