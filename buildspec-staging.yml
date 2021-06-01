@@ -1,0 +1,29 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - mkdir -p ~/.aws
+      - echo "[default]" > ~/.aws/credentials
+      - echo "aws_access_key_id=$AWS_ACCESS_KEY_ID" >> ~/.aws/credentials
+      - echo "aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" >> ~/.aws/credentials
+
+      - echo "[default]" > ~/.aws/config
+      - echo "region=ap-southeast-1" >> ~/.aws/config
+
+      - aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin 950066988925.dkr.ecr.ap-southeast-1.amazonaws.com
+      - aws s3 cp s3://tada-deployment-credentials/tada-api/staging.env .env
+  build:
+    commands:
+      - echo "[auth]" >> "./.sentryclirc"
+      - echo "token=$SENTRY_AUTH_TOKEN" >> "./.sentryclirc"
+
+      - docker build -t $CI_REGISTRY:stag --build-arg ENV=staging .
+      - docker push $CI_REGISTRY:stag
+  post_build:
+    commands:
+      - mkdir -p /root/.ssh/
+      - aws s3 cp s3://tada-deployment-credentials/private-ssh-key-staging.pem /root/.ssh/id_rsa
+      - aws eks --region ap-southeast-1 update-kubeconfig --name tada_core
+      - kubectl apply -f ./deployment/staging/kubernetes/tada-api.yaml
+      - kubectl rollout restart deployment/tada-api-staging --namespace tada-staging

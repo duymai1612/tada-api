@@ -1,4 +1,4 @@
-@startuml VDES Entity Relationship Diagram
+@startuml Tada Entity Relationship Diagram
 
 ' hide the spot
 hide circle

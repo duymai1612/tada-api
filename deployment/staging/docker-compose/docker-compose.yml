@@ -1,0 +1,15 @@
+version: '3'
+
+networks:
+  tada-application-network:
+    driver: bridge
+
+services:
+  tada-api:
+    container_name: tada-api
+    image: 950066988925.dkr.ecr.ap-southeast-1.amazonaws.com/tada-api:stag
+    ports:
+      - '3001:3001'
+    networks:
+      - tada-application-network
+    restart: on-failure:10
